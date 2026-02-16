@@ -1,0 +1,438 @@
+# 📘 Product Requirements Document (PRD)
+
+## Product Name
+
+**MedProof Protocol**
+
+## Category
+
+Starknet-native healthcare safety verification protocol
+
+## Vision
+
+Create a privacy-preserving, pharmacist-governed, AI-assisted medical logging protocol on Starknet that:
+
+* Logs drug interaction safety checks
+* Preserves patient privacy
+* Rewards responsible pharmacists
+* Enables frictionless UX via session keys
+* Provides auditability without exposing PII
+
+---
+
+# 1️⃣ System Architecture Overview
+
+### Core Layers
+
+1. Access Control Layer → `PharmacistRegistry`
+2. Logging Layer → `MedicalLogger`
+3. Reputation Layer → `ReputationSBT`
+4. Account Layer → `SessionAccount`
+5. Frontend → Next.js + Starknet.js
+
+---
+
+# 2️⃣ Smart Contracts
+
+---
+
+## A. PharmacistRegistry.cairo
+
+### Purpose
+
+Manages authorized pharmacist wallets.
+
+### Storage
+
+* `owner: ContractAddress`
+* `pharmacists: LegacyMap<ContractAddress, bool>`
+
+### Functions
+
+| Function           | Access | Description      |
+| ------------------ | ------ | ---------------- |
+| add_pharmacist     | Owner  | Registers wallet |
+| remove_pharmacist  | Owner  | Removes wallet   |
+| is_pharmacist      | Public | View check       |
+| transfer_ownership | Owner  | DAO upgrade path |
+
+### Requirements
+
+* Only owner can modify registry
+* Emits events for every change
+* Must not allow duplicate registration
+
+### Future Upgrade
+
+Ownership can be transferred to Governance contract.
+
+---
+
+## B. MedicalLogger.cairo
+
+### Purpose
+
+Logs AI risk assessments and pharmacist actions.
+
+### Storage
+
+* `registry: ContractAddress`
+* `reputation: ContractAddress`
+* `logs: LegacyMap<felt252, LogEntry>`
+
+### LogEntry
+
+* pharmacist
+* risk_level (u8)
+* overridden (bool)
+* blocked (bool)
+* timestamp
+
+### Functions
+
+| Function         | Access     | Description             |
+| ---------------- | ---------- | ----------------------- |
+| log_safety_check | Pharmacist | Stores commitment       |
+| override_warning | Pharmacist | Logs override           |
+| confirm_block    | Pharmacist | Rewards high-risk block |
+| get_log          | Public     | View log                |
+
+### Business Rules
+
+* Only registered pharmacists can log
+* Cannot reuse commitment
+* High risk threshold ≥ 2
+* confirm_block mints SBT
+* No PII stored on-chain
+
+---
+
+## C. ReputationSBT.cairo
+
+### Purpose
+
+Non-transferable reputation token.
+
+### Storage
+
+* owner
+* medical_logger
+* balances
+* token_owner
+* next_token_id
+
+### Functions
+
+| Function             | Access | Description      |
+| -------------------- | ------ | ---------------- |
+| mint_lifesaver_badge | Logger | Mint SBT         |
+| reputation_score     | Public | View score       |
+| owner_of             | Public | View token owner |
+| set_medical_logger   | Owner  | Set logger       |
+| transfer_ownership   | Owner  | Upgrade path     |
+
+### Rules
+
+* No transfer function
+* Only MedicalLogger can mint
+* Sequential token IDs
+* Represents pharmacist credibility
+
+---
+
+## D. SessionAccount.cairo
+
+### Purpose
+
+Enable frictionless UX via session keys.
+
+### Storage
+
+* owner pubkey
+* sessions mapping
+
+### SessionData
+
+* expires_at
+* allowed_target
+* active
+
+### Functions
+
+| Function          | Access   | Description             |
+| ----------------- | -------- | ----------------------- |
+| authorize_session | Owner    | Approve session key     |
+| revoke_session    | Owner    | Disable session         |
+| **validate**      | Internal | Verify owner or session |
+| **execute**       | Internal | Execute calls           |
+
+### Rules
+
+* Session must not be expired
+* Session must match allowed target
+* Session revocable anytime
+* Owner always overrides session authority
+
+---
+
+# 3️⃣ Privacy Architecture
+
+No patient data stored on-chain.
+
+### Off-chain (Next.js)
+
+1. Generate random salt
+2. Compute commitment:
+
+```
+hash(patient + drug + salt)
+```
+
+3. Send only commitment to contract
+
+### On-chain
+
+* Only commitment stored
+
+### Reveal Flow (if required)
+
+* Provide patient + drug + salt
+* Recompute hash
+* Verify equality
+
+This is commit-reveal architecture.
+
+---
+
+# 4️⃣ Deployment Process
+
+### Step 1
+
+Deploy `PharmacistRegistry`
+
+* Set initial owner (admin wallet)
+
+### Step 2
+
+Deploy `ReputationSBT`
+
+* Set initial owner
+
+### Step 3
+
+Deploy `MedicalLogger`
+
+* Inject:
+
+  * registry address
+  * reputation address
+
+### Step 4
+
+Call `set_medical_logger()` in ReputationSBT
+
+* Set logger address
+
+### Step 5
+
+Deploy `SessionAccount`
+
+* For each pharmacist or use as default wallet template
+
+### Step 6 (Optional)
+
+Transfer Registry ownership to Governance contract
+
+---
+
+# 5️⃣ Contract Interaction Flow
+
+---
+
+## Standard Logging Flow
+
+1. Pharmacist logs in via wallet
+2. Next.js generates commitment
+3. Frontend calls:
+
+   * `log_safety_check(commitment, risk_level)`
+4. If high-risk blocked:
+
+   * `confirm_block(commitment)`
+5. SBT minted automatically
+
+---
+
+## Override Flow
+
+1. Pharmacist calls:
+
+   * `override_warning(commitment, reason_hash)`
+2. Event emitted
+3. Stored on-chain for audit
+
+---
+
+## Session Flow
+
+1. Morning:
+
+   * Owner signs `authorize_session()`
+2. During day:
+
+   * Frontend signs tx with session key
+   * Account validates
+   * No wallet popup
+
+---
+
+# 6️⃣ Next.js Frontend Integration
+
+---
+
+## Stack
+
+* Next.js 14
+* Starknet.js
+* Argent / Braavos wallet
+* Optional backend for AI + salt generation
+
+---
+
+## Frontend Responsibilities
+
+### 1. Wallet Connection
+
+Use Starknet.js provider
+
+### 2. Commitment Generation
+
+```
+const commitment = pedersen(
+    hash(patientData),
+    salt
+)
+```
+
+### 3. Contract Calls
+
+Instantiate contracts:
+
+```
+new Contract(abi, address, account)
+```
+
+Call:
+
+```
+contract.log_safety_check(...)
+```
+
+### 4. Event Indexing
+
+Listen for:
+
+* SafetyLogged
+* HighRiskBlocked
+* OverrideUsed
+* LifesaverBadgeMinted
+
+Display:
+
+* Reputation score
+* Audit history
+
+---
+
+## Required Views in UI
+
+1. Dashboard
+
+   * Reputation score
+   * Total logs
+   * Override count
+
+2. Log Entry Form
+
+   * Drug info
+   * AI risk result
+   * Block / Override
+
+3. Admin Panel
+
+   * Add pharmacist
+   * Remove pharmacist
+
+4. Session Control Panel
+
+   * Authorize session
+   * Revoke session
+
+---
+
+# 7️⃣ Non-Functional Requirements
+
+* No PII on-chain
+* Gas efficient
+* All state-changing functions emit events
+* Revert on invalid access
+* Modular contracts (no circular dependencies)
+
+---
+
+# 8️⃣ Security Considerations
+
+* Registry check on all logger writes
+* Session expiry enforced
+* Logger address immutable after setup (unless governance)
+* No unchecked external calls
+* No token transfers (SBT)
+
+---
+
+# 9️⃣ Future Extensions
+
+* Governance voting
+* Slashing for malpractice
+* Insurance pool
+* AI oracle integration
+* Paymaster gas abstraction
+* Badge tiers
+* Reputation decay model
+
+---
+
+# 🔟 Success Criteria
+
+MVP success means:
+
+* Pharmacist can log safely
+* No PII stored
+* Reputation minting works
+* Session keys remove repeated signing
+* Events indexable
+* Fully deployable on Starknet Sepolia
+
+---
+
+# Summary
+
+This system delivers:
+
+* Starknet-native account abstraction
+* Privacy-first healthcare logging
+* Gamified professional reputation
+* Modular governance-ready architecture
+
+This is no longer a demo app.
+
+It is a protocol-level medical audit infrastructure.
+
+---
+
+If you'd like next, I can produce:
+
+* Technical Architecture Diagram
+* Hackathon Pitch Version (condensed)
+* Tokenomics / Economic Model PRD
+* Or Production Hardening Checklist
