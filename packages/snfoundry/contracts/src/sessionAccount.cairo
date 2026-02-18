@@ -1,10 +1,22 @@
 use starknet::ContractAddress;
+use starknet::account::Call;
+
+#[derive(Drop, Serde, Copy, starknet::Store)]
+pub struct SessionData {
+    pub expires_at: u64,
+    pub allowed_target: ContractAddress,
+    pub active: bool,
+}
 
 #[starknet::interface]
 pub trait ISessionAccount<TContractState> {
     fn authorize_session(ref self: TContractState, session_key: felt252, expires_at: u64, allowed_target: ContractAddress);
     fn revoke_session(ref self: TContractState, session_key: felt252);
     fn get_owner(self: @TContractState) -> felt252;
+    fn get_session(self: @TContractState, session_key: felt252) -> SessionData;
+    fn is_session_active(self: @TContractState, session_key: felt252) -> bool;
+    fn get_all_sessions(self: @TContractState) -> Array<felt252>;
+    fn validate_session(self: @TContractState, signer: felt252, calls: Array<Call>) -> felt252;
 }
 
 #[starknet::contract(account)]
@@ -12,6 +24,7 @@ pub mod SessionAccount {
     use starknet::ContractAddress;
     use starknet::{get_block_timestamp, get_tx_info, VALIDATED};
     use starknet::account::Call;
+    use super::SessionData; // Import SessionData from super module
     
     // CORRECT imports from the docs [citation:2]
     use openzeppelin_account::AccountComponent;
@@ -34,6 +47,8 @@ pub mod SessionAccount {
     use starknet::storage::{
         StoragePointerReadAccess,
         StoragePointerWriteAccess,
+        StorageMapReadAccess,
+        StorageMapWriteAccess,
         Map,
         StoragePathEntry,
     };
@@ -42,6 +57,9 @@ pub mod SessionAccount {
     struct Storage {
         owner: felt252,
         sessions: Map<felt252, SessionData>,
+        // List storage for sessions
+        session_keys: Map<u64, felt252>,
+        session_count: u64,
         // Component storage [citation:2]
         #[substorage(v0)]
         account: AccountComponent::Storage,
@@ -49,12 +67,8 @@ pub mod SessionAccount {
         src5: SRC5Component::Storage,
     }
 
-    #[derive(Drop, Serde, Copy, starknet::Store)]
-    pub struct SessionData {
-        pub expires_at: u64,
-        pub allowed_target: ContractAddress,
-        pub active: bool,
-    }
+    // SessionData moved outside
+
 
     #[event]
     #[derive(Drop, starknet::Event)]
@@ -110,6 +124,12 @@ pub mod SessionAccount {
             };
 
             self.sessions.entry(session_key).write(session);
+            
+            // Add to list
+            let count = self.session_count.read();
+            self.session_keys.write(count, session_key);
+            self.session_count.write(count + 1);
+
             self.emit(SessionAuthorized { session_key, expires_at, allowed_target });
         }
 
@@ -126,12 +146,38 @@ pub mod SessionAccount {
         fn get_owner(self: @ContractState) -> felt252 {
             self.owner.read()
         }
+
+        fn get_session(self: @ContractState, session_key: felt252) -> SessionData {
+            self.sessions.entry(session_key).read()
+        }
+
+        fn is_session_active(self: @ContractState, session_key: felt252) -> bool {
+            let session = self.sessions.entry(session_key).read();
+            let now = get_block_timestamp();
+            session.active && now <= session.expires_at
+        }
+
+        fn get_all_sessions(self: @ContractState) -> Array<felt252> {
+            let mut arr = array![];
+            let count = self.session_count.read();
+            let mut i = 0;
+            loop {
+                if i >= count { break; }
+                arr.append(self.session_keys.read(i));
+                i += 1;
+            };
+            arr
+        }
+
+        fn validate_session(self: @ContractState, signer: felt252, calls: Array<Call>) -> felt252 {
+            self.validate_session_internal(signer, calls)
+        }
     }
 
     // Custom validation for session keys
     #[generate_trait]
     impl CustomValidation of CustomValidationTrait {
-        fn validate_session(
+        fn validate_session_internal(
             self: @ContractState,
             signer: felt252,
             calls: Array<Call>

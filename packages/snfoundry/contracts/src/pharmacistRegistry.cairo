@@ -13,6 +13,7 @@ pub trait IPharmacistRegistry<TContractState> {
 pub mod PharmacistRegistry {
     use starknet::ContractAddress;
     use starknet::get_caller_address;
+    use core::num::traits::Zero;
     
     // Import ALL needed storage traits
     use starknet::storage::{
@@ -105,6 +106,7 @@ pub mod PharmacistRegistry {
 
         fn transfer_ownership(ref self: ContractState, new_owner: ContractAddress) {
             self._only_owner();
+            assert(new_owner.is_non_zero(), 'INVALID_ADDRESS');
             
             // Simple variable read/write - uses StoragePointerReadAccess/WriteAccess
             let previous_owner = self.owner.read();

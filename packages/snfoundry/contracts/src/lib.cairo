@@ -1,4 +1,4 @@
-mod reputationSBT;
-mod pharmacistRegistry;
-mod medicalLogger;
-mod sessionAccount;
+pub mod reputationSBT;
+pub mod pharmacistRegistry;
+pub mod medicalLogger;
+pub mod sessionAccount;
