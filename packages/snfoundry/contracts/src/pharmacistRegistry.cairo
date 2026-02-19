@@ -80,6 +80,7 @@ pub mod PharmacistRegistry {
 
         fn add_pharmacist(ref self: ContractState, user: ContractAddress) {
             self._only_owner();
+            assert(user.is_non_zero(), 'INVALID_ADDRESS');
             
             // Map read - uses StorageMapReadAccess
             let exists = self.pharmacists.read(user);
