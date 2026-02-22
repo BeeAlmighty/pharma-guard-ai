@@ -20,12 +20,14 @@ import {
 
 // Custom Hooks & Utils
 import { useDrugInteractions } from '../hooks/useDrugInteractions';
+import { useMedicalLogger } from '../hooks/useMedicalLogger';
 import { generateClinicalReport } from '../utils/pdfGenerator';
 
 // Components
 import { CustomConnectButton } from '~~/components/scaffold-stark/CustomConnectButton';
 import DrugSearch from '../components/DrugSearch';
 import { InteractionCard } from '../components/InteractionCard';
+import PharmacistPanel from '../components/PharmacistPanel';
 
 // Types
 interface LifestyleOption {
@@ -40,10 +42,15 @@ const DrugInteractionChecker: NextPage = () => {
 		drugList,
 		interactions,
 		loading,
+		commitment,
+		maxRiskLevel,
 		addDrug,
 		removeDrug,
 		evaluateSafety,
 	} = useDrugInteractions();
+
+	// Blockchain audit hook — txHash used in the success toast
+	const { txHash: auditTxHash } = useMedicalLogger(commitment);
 
 	// UI State (Local)
 	const [context, setContext] = useState<string>('');
@@ -102,6 +109,13 @@ const DrugInteractionChecker: NextPage = () => {
 			<main className='flex-1 p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:overflow-hidden'>
 				{/* --- COL 1: CONTEXT & INFO --- */}
 				<section className='lg:col-span-3 flex flex-col gap-4 lg:h-full lg:overflow-y-auto pr-1 custom-scrollbar'>
+					{/* On-Chain Audit Panel */}
+					<PharmacistPanel
+						commitment={commitment}
+						interactions={interactions}
+						maxRiskLevel={maxRiskLevel}
+					/>
+
 					<div className='bg-slate-900/60 border border-white/5 rounded-2xl p-5 backdrop-blur-xl'>
 						<div className='flex items-center gap-3 mb-6'>
 							<div className='w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center border border-slate-700'>
@@ -131,11 +145,10 @@ const DrugInteractionChecker: NextPage = () => {
 														: [...p, opt.id],
 												)
 											}
-											className={`flex items-center gap-3 p-3 rounded-xl border transition-all text-sm ${
-												lifestyle.includes(opt.id)
-													? 'bg-indigo-600/20 border-indigo-500/50 text-white'
-													: 'bg-slate-950/40 border-slate-800 text-slate-400 hover:bg-slate-800'
-											}`}
+											className={`flex items-center gap-3 p-3 rounded-xl border transition-all text-sm ${lifestyle.includes(opt.id)
+												? 'bg-indigo-600/20 border-indigo-500/50 text-white'
+												: 'bg-slate-950/40 border-slate-800 text-slate-400 hover:bg-slate-800'
+												}`}
 										>
 											<opt.icon
 												className={`w-4 h-4 ${lifestyle.includes(opt.id) ? 'text-indigo-400' : 'text-slate-500'}`}
@@ -349,7 +362,10 @@ const DrugInteractionChecker: NextPage = () => {
 								Audit Log Recorded
 							</p>
 							<p className='text-xs text-emerald-400/70 font-mono'>
-								Hash: 0x8a...4b29
+								{auditTxHash
+									? `Tx: ${auditTxHash.slice(0, 10)}…${auditTxHash.slice(-6)}`
+									: 'Logged on Starknet'}
+
 							</p>
 						</div>
 					</div>

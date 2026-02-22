@@ -1,5 +1,6 @@
 // packages/nextjs/hooks/useDrugInteractions.ts
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { drugListToCommitment, maxRiskFromInteractions } from './useMedicalLogger';
 
 export interface Interaction {
 	severity: string;
@@ -23,7 +24,7 @@ export const useDrugInteractions = () => {
 		const drugClean = toTitleCase(drugRaw);
 		if (!drugList.includes(drugClean)) {
 			setDrugList(prev => [...prev, drugClean]);
-			setInteractions(null); // Reset results on change
+			setInteractions(null);
 		}
 	};
 
@@ -31,6 +32,15 @@ export const useDrugInteractions = () => {
 		setDrugList(prev => prev.filter(d => d !== drug));
 		setInteractions(null);
 	};
+
+	/** Stable felt252 commitment derived from the current drug list */
+	const commitment = useMemo(() => drugListToCommitment(drugList), [drugList]);
+
+	/** Highest risk level from the AI analysis (1=Low, 2=Moderate, 3=High) */
+	const maxRiskLevel = useMemo(
+		() => maxRiskFromInteractions(interactions),
+		[interactions],
+	);
 
 	const evaluateSafety = async (context: string, lifestyle: string[]) => {
 		if (drugList.length < 2) return;
@@ -50,11 +60,11 @@ export const useDrugInteractions = () => {
 
 			const data: Interaction[] = await response.json();
 			setInteractions(data);
-			return true; // Success
+			return true;
 		} catch (error) {
 			console.error(error);
 			alert('Clinical screening failed. Verify n8n connection.');
-			return false; // Failure
+			return false;
 		} finally {
 			setLoading(false);
 		}
@@ -64,6 +74,8 @@ export const useDrugInteractions = () => {
 		drugList,
 		interactions,
 		loading,
+		commitment,
+		maxRiskLevel,
 		addDrug,
 		removeDrug,
 		evaluateSafety,

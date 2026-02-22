@@ -35,6 +35,11 @@ const ConnectModal = () => {
   // Identify devnet by network name
   const isDevnet = targetNetwork.network === "devnet";
 
+  // Separate MetaMask Snap from the rest for featured placement
+  const metamaskConnector = connectors.find((c) => c.id === "metamask");
+  const isMetaMaskInstalled =
+    typeof window !== "undefined" && !!(window as any).ethereum;
+
   // Split connectors into main and other options for devnet
   let mainConnectors = connectors;
   let otherConnectors: typeof connectors = [];
@@ -42,6 +47,11 @@ const ConnectModal = () => {
     mainConnectors = connectors.filter((c) => c.id === "burner-wallet");
     otherConnectors = connectors.filter((c) => c.id !== "burner-wallet");
   }
+
+  // Non-metamask main connectors for the standard list
+  const standardMainConnectors = mainConnectors.filter(
+    (c) => c.id !== "metamask",
+  );
 
   const handleCloseModal = () => {
     if (modalRef.current) modalRef.current.checked = false;
@@ -117,7 +127,72 @@ const ConnectModal = () => {
               {!isBurnerWallet ? (
                 !showOtherOptions ? (
                   <>
-                    {mainConnectors.map((connector, index) => (
+                    {/* ── MetaMask Starknet Snap — featured ──────────────── */}
+                    {!isDevnet && metamaskConnector && (
+                      <>
+                        <div className="flex flex-col gap-1">
+                          <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold px-1">
+                            MetaMask
+                          </p>
+                          <div
+                            className={`border rounded-[6px] p-0.5 ${isDarkMode
+                              ? "border-orange-500/40 bg-orange-500/5"
+                              : "border-orange-400/50 bg-orange-50"
+                              }`}
+                          >
+                            <div className="relative">
+                              <button
+                                className={`flex gap-4 items-center text-neutral w-full rounded-[4px] p-3 transition-all ${isDarkMode
+                                  ? "hover:bg-orange-500/10"
+                                  : "hover:bg-orange-100/50"
+                                  }`}
+                                onClick={(e) =>
+                                  handleConnectWallet(e, metamaskConnector)
+                                }
+                              >
+                                <div className="h-6 w-6">
+                                  <img
+                                    src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg"
+                                    alt="MetaMask"
+                                    className="h-full w-full object-contain"
+                                  />
+                                </div>
+                                <span className="font-bold">MetaMask</span>
+                              </button>
+                              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-400 border border-orange-500/30">
+                                Starknet Snap
+                              </span>
+                            </div>
+                            {!isMetaMaskInstalled && (
+                              <p className="text-[11px] text-slate-500 px-3 pb-2 pt-1">
+                                MetaMask not detected —{" "}
+                                <a
+                                  href="https://metamask.io/download"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-orange-400 underline hover:text-orange-300"
+                                >
+                                  install it
+                                </a>{" "}
+                                first, then connect.
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Divider */}
+                        <div className="flex items-center gap-3 my-1">
+                          <div className="flex-1 h-px bg-slate-700/50" />
+                          <span className="text-[10px] uppercase tracking-widest text-slate-600">
+                            or
+                          </span>
+                          <div className="flex-1 h-px bg-slate-700/50" />
+                        </div>
+                      </>
+                    )}
+
+                    {/* ── Standard wallets ───────────────────────────────── */}
+                    {standardMainConnectors.map((connector, index) => (
                       <Wallet
                         key={connector.id || index}
                         connector={connector}
@@ -125,6 +200,7 @@ const ConnectModal = () => {
                         handleConnectWallet={handleConnectWallet}
                       />
                     ))}
+
                     {isDevnet && otherConnectors.length > 0 && (
                       <button
                         className="btn btn-ghost rounded-md mt-4 font-normal text-base"
@@ -184,3 +260,5 @@ const ConnectModal = () => {
 };
 
 export default ConnectModal;
+
+

@@ -1,8 +1,4 @@
 use starknet::ContractAddress;
-use crate::pharmacistRegistry::IPharmacistRegistryDispatcher;
-use crate::pharmacistRegistry::IPharmacistRegistryDispatcherTrait;
-use crate::reputationSBT::IReputationSBTDispatcher;
-use crate::reputationSBT::IReputationSBTDispatcherTrait;
 
 #[derive(Drop, Serde, Copy, starknet::Store)]
 pub struct LogEntry {

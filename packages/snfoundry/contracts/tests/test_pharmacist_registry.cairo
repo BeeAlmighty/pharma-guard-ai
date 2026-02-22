@@ -1,7 +1,7 @@
 use starknet::ContractAddress;
 use snforge_std::{declare, ContractClassTrait, DeclareResultTrait};
 use snforge_std::{start_cheat_caller_address, stop_cheat_caller_address};
-use snforge_std::cheatcodes::events::{spy_events, EventSpyTrait, EventsFilterTrait};
+use snforge_std::cheatcodes::events::{spy_events, EventSpyTrait};
 
 use contracts::pharmacistRegistry::{
     IPharmacistRegistryDispatcher,

@@ -1,4 +1,4 @@
-import { braavos, InjectedConnector, ready } from "@starknet-react/core";
+import { argent, braavos, injected, InjectedConnector } from "@starknet-react/core";
 import { getTargetNetworks } from "~~/utils/scaffold-stark";
 import { BurnerConnector } from "@scaffold-stark/stark-burner";
 import scaffoldConfig from "~~/scaffold.config";
@@ -6,8 +6,6 @@ import { LAST_CONNECTED_TIME_LOCALSTORAGE_KEY } from "~~/utils/Constants";
 import { KeplrConnector } from "./keplr";
 
 const targetNetworks = getTargetNetworks();
-
-export const connectors = getConnectors();
 
 // workaround helper function to properly disconnect with removing local storage (prevent autoconnect infinite loop)
 function withDisconnectWrapper(connector: InjectedConnector) {
@@ -21,10 +19,16 @@ function withDisconnectWrapper(connector: InjectedConnector) {
   return connector;
 }
 
+// MetaMask Starknet Snap connector
+// Discovery via injected({id: 'metamask'}) is the standard way in v5.0.3+
+const metamaskSnapConnector = injected({
+  id: "metamask",
+});
+
 function getConnectors() {
   const { targetNetworks } = scaffoldConfig;
 
-  const connectors: InjectedConnector[] = [ready(), braavos()];
+  const connectors = [argent(), braavos(), metamaskSnapConnector];
   const isDevnet = targetNetworks.some(
     (network) => (network.network as string) === "devnet",
   );
@@ -41,4 +45,8 @@ function getConnectors() {
   return connectors.sort(() => Math.random() - 0.5).map(withDisconnectWrapper);
 }
 
+export const connectors = getConnectors();
+
 export const appChains = targetNetworks;
+
+
