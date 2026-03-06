@@ -49,7 +49,7 @@ export const useDrugInteractions = () => {
 
 		try {
 			const response = await fetch(
-				'http://localhost:5678/webhook/interaction-check',
+				'https://n8n.geotech.agency/webhook/interaction-check',
 				{
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
