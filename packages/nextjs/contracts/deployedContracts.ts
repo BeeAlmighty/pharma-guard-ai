@@ -1092,6 +1092,1094 @@ const deployedContracts = {
         "0x31b33b884bc65a6e828acb5326670c812414b682810efae1af0123df7182960",
     },
   },
+  sepolia: {
+    PharmacistRegistry: {
+      address:
+        "0x3979094b9b1052ece42450ce83ff920d441ff9abddc5431d76f1dfc8d5418d6",
+      abi: [
+        {
+          type: "impl",
+          name: "PharmacistRegistryImpl",
+          interface_name: "contracts::pharmacistRegistry::IPharmacistRegistry",
+        },
+        {
+          type: "enum",
+          name: "core::bool",
+          variants: [
+            {
+              name: "False",
+              type: "()",
+            },
+            {
+              name: "True",
+              type: "()",
+            },
+          ],
+        },
+        {
+          type: "interface",
+          name: "contracts::pharmacistRegistry::IPharmacistRegistry",
+          items: [
+            {
+              type: "function",
+              name: "is_pharmacist",
+              inputs: [
+                {
+                  name: "user",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::bool",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "add_pharmacist",
+              inputs: [
+                {
+                  name: "user",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "remove_pharmacist",
+              inputs: [
+                {
+                  name: "user",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "transfer_ownership",
+              inputs: [
+                {
+                  name: "new_owner",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "get_owner",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              state_mutability: "view",
+            },
+          ],
+        },
+        {
+          type: "constructor",
+          name: "constructor",
+          inputs: [
+            {
+              name: "initial_owner",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "contracts::pharmacistRegistry::PharmacistRegistry::OwnershipTransferred",
+          kind: "struct",
+          members: [
+            {
+              name: "previous_owner",
+              type: "core::starknet::contract_address::ContractAddress",
+              kind: "key",
+            },
+            {
+              name: "new_owner",
+              type: "core::starknet::contract_address::ContractAddress",
+              kind: "key",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "contracts::pharmacistRegistry::PharmacistRegistry::PharmacistAdded",
+          kind: "struct",
+          members: [
+            {
+              name: "pharmacist",
+              type: "core::starknet::contract_address::ContractAddress",
+              kind: "key",
+            },
+            {
+              name: "added_by",
+              type: "core::starknet::contract_address::ContractAddress",
+              kind: "data",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "contracts::pharmacistRegistry::PharmacistRegistry::PharmacistRemoved",
+          kind: "struct",
+          members: [
+            {
+              name: "pharmacist",
+              type: "core::starknet::contract_address::ContractAddress",
+              kind: "key",
+            },
+            {
+              name: "removed_by",
+              type: "core::starknet::contract_address::ContractAddress",
+              kind: "data",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "contracts::pharmacistRegistry::PharmacistRegistry::Event",
+          kind: "enum",
+          variants: [
+            {
+              name: "OwnershipTransferred",
+              type: "contracts::pharmacistRegistry::PharmacistRegistry::OwnershipTransferred",
+              kind: "nested",
+            },
+            {
+              name: "PharmacistAdded",
+              type: "contracts::pharmacistRegistry::PharmacistRegistry::PharmacistAdded",
+              kind: "nested",
+            },
+            {
+              name: "PharmacistRemoved",
+              type: "contracts::pharmacistRegistry::PharmacistRegistry::PharmacistRemoved",
+              kind: "nested",
+            },
+          ],
+        },
+      ],
+      classHash:
+        "0x6703ae440cbd14ac76e68eadb6839efb1189e42497bb32216aec3fa5a3d938b",
+    },
+    ReputationSBT: {
+      address:
+        "0x362ac634610d42d1ed96caa98ef76c918f120d278a56a9f653ada970a786b67",
+      abi: [
+        {
+          type: "impl",
+          name: "ReputationSBTImpl",
+          interface_name: "contracts::reputationSBT::IReputationSBT",
+        },
+        {
+          type: "struct",
+          name: "core::integer::u256",
+          members: [
+            {
+              name: "low",
+              type: "core::integer::u128",
+            },
+            {
+              name: "high",
+              type: "core::integer::u128",
+            },
+          ],
+        },
+        {
+          type: "interface",
+          name: "contracts::reputationSBT::IReputationSBT",
+          items: [
+            {
+              type: "function",
+              name: "mint_lifesaver_badge",
+              inputs: [
+                {
+                  name: "to",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "reputation_score",
+              inputs: [
+                {
+                  name: "user",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::integer::u256",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "owner_of",
+              inputs: [
+                {
+                  name: "token_id",
+                  type: "core::integer::u256",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "set_medical_logger",
+              inputs: [
+                {
+                  name: "new_logger",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "transfer_ownership",
+              inputs: [
+                {
+                  name: "new_owner",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+          ],
+        },
+        {
+          type: "constructor",
+          name: "constructor",
+          inputs: [
+            {
+              name: "initial_owner",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "contracts::reputationSBT::ReputationSBT::OwnershipTransferred",
+          kind: "struct",
+          members: [
+            {
+              name: "previous_owner",
+              type: "core::starknet::contract_address::ContractAddress",
+              kind: "key",
+            },
+            {
+              name: "new_owner",
+              type: "core::starknet::contract_address::ContractAddress",
+              kind: "key",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "contracts::reputationSBT::ReputationSBT::MedicalLoggerUpdated",
+          kind: "struct",
+          members: [
+            {
+              name: "new_logger",
+              type: "core::starknet::contract_address::ContractAddress",
+              kind: "data",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "contracts::reputationSBT::ReputationSBT::LifesaverBadgeMinted",
+          kind: "struct",
+          members: [
+            {
+              name: "to",
+              type: "core::starknet::contract_address::ContractAddress",
+              kind: "key",
+            },
+            {
+              name: "token_id",
+              type: "core::integer::u256",
+              kind: "data",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "contracts::reputationSBT::ReputationSBT::Event",
+          kind: "enum",
+          variants: [
+            {
+              name: "OwnershipTransferred",
+              type: "contracts::reputationSBT::ReputationSBT::OwnershipTransferred",
+              kind: "nested",
+            },
+            {
+              name: "MedicalLoggerUpdated",
+              type: "contracts::reputationSBT::ReputationSBT::MedicalLoggerUpdated",
+              kind: "nested",
+            },
+            {
+              name: "LifesaverBadgeMinted",
+              type: "contracts::reputationSBT::ReputationSBT::LifesaverBadgeMinted",
+              kind: "nested",
+            },
+          ],
+        },
+      ],
+      classHash:
+        "0xd899897640c828a104fc860d340ba39e32b185748edb1873dd1f2d6b0dd0f5",
+    },
+    MedicalLogger: {
+      address:
+        "0x5245bdc9f2b35671f1112491964a8f442315ab3744c3ce8144c773f724b04c8",
+      abi: [
+        {
+          type: "impl",
+          name: "MedicalLoggerImpl",
+          interface_name: "contracts::medicalLogger::IMedicalLogger",
+        },
+        {
+          type: "enum",
+          name: "core::bool",
+          variants: [
+            {
+              name: "False",
+              type: "()",
+            },
+            {
+              name: "True",
+              type: "()",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::medicalLogger::LogEntry",
+          members: [
+            {
+              name: "pharmacist",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+            {
+              name: "risk_level",
+              type: "core::integer::u8",
+            },
+            {
+              name: "overridden",
+              type: "core::bool",
+            },
+            {
+              name: "timestamp",
+              type: "core::integer::u64",
+            },
+            {
+              name: "blocked",
+              type: "core::bool",
+            },
+          ],
+        },
+        {
+          type: "interface",
+          name: "contracts::medicalLogger::IMedicalLogger",
+          items: [
+            {
+              type: "function",
+              name: "log_safety_check",
+              inputs: [
+                {
+                  name: "commitment",
+                  type: "core::felt252",
+                },
+                {
+                  name: "risk_level",
+                  type: "core::integer::u8",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "override_warning",
+              inputs: [
+                {
+                  name: "commitment",
+                  type: "core::felt252",
+                },
+                {
+                  name: "reason_hash",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "confirm_block",
+              inputs: [
+                {
+                  name: "commitment",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "get_log",
+              inputs: [
+                {
+                  name: "commitment",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "contracts::medicalLogger::LogEntry",
+                },
+              ],
+              state_mutability: "view",
+            },
+          ],
+        },
+        {
+          type: "constructor",
+          name: "constructor",
+          inputs: [
+            {
+              name: "registry_address",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+            {
+              name: "reputation_address",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "contracts::medicalLogger::MedicalLogger::SafetyLogged",
+          kind: "struct",
+          members: [
+            {
+              name: "commitment",
+              type: "core::felt252",
+              kind: "key",
+            },
+            {
+              name: "pharmacist",
+              type: "core::starknet::contract_address::ContractAddress",
+              kind: "data",
+            },
+            {
+              name: "risk_level",
+              type: "core::integer::u8",
+              kind: "data",
+            },
+            {
+              name: "timestamp",
+              type: "core::integer::u64",
+              kind: "data",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "contracts::medicalLogger::MedicalLogger::OverrideUsed",
+          kind: "struct",
+          members: [
+            {
+              name: "commitment",
+              type: "core::felt252",
+              kind: "key",
+            },
+            {
+              name: "pharmacist",
+              type: "core::starknet::contract_address::ContractAddress",
+              kind: "data",
+            },
+            {
+              name: "reason_hash",
+              type: "core::felt252",
+              kind: "data",
+            },
+            {
+              name: "timestamp",
+              type: "core::integer::u64",
+              kind: "data",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "contracts::medicalLogger::MedicalLogger::HighRiskBlocked",
+          kind: "struct",
+          members: [
+            {
+              name: "commitment",
+              type: "core::felt252",
+              kind: "key",
+            },
+            {
+              name: "pharmacist",
+              type: "core::starknet::contract_address::ContractAddress",
+              kind: "data",
+            },
+            {
+              name: "timestamp",
+              type: "core::integer::u64",
+              kind: "data",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "contracts::medicalLogger::MedicalLogger::Event",
+          kind: "enum",
+          variants: [
+            {
+              name: "SafetyLogged",
+              type: "contracts::medicalLogger::MedicalLogger::SafetyLogged",
+              kind: "nested",
+            },
+            {
+              name: "OverrideUsed",
+              type: "contracts::medicalLogger::MedicalLogger::OverrideUsed",
+              kind: "nested",
+            },
+            {
+              name: "HighRiskBlocked",
+              type: "contracts::medicalLogger::MedicalLogger::HighRiskBlocked",
+              kind: "nested",
+            },
+          ],
+        },
+      ],
+      classHash:
+        "0x33ef88f4efde13d5202fd02ff4aa26c1545acb31364811a6bf310d53cae660c",
+    },
+    SessionAccount: {
+      address:
+        "0x63c74e0be5bba31e54fc7fa8accde9b549cd9c1dc4f21624a1dae5f13110412",
+      abi: [
+        {
+          type: "impl",
+          name: "SessionAccountImpl",
+          interface_name: "contracts::sessionAccount::ISessionAccount",
+        },
+        {
+          type: "enum",
+          name: "core::bool",
+          variants: [
+            {
+              name: "False",
+              type: "()",
+            },
+            {
+              name: "True",
+              type: "()",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::sessionAccount::SessionData",
+          members: [
+            {
+              name: "expires_at",
+              type: "core::integer::u64",
+            },
+            {
+              name: "allowed_target",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+            {
+              name: "active",
+              type: "core::bool",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "core::array::Span::<core::felt252>",
+          members: [
+            {
+              name: "snapshot",
+              type: "@core::array::Array::<core::felt252>",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "core::starknet::account::Call",
+          members: [
+            {
+              name: "to",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+            {
+              name: "selector",
+              type: "core::felt252",
+            },
+            {
+              name: "calldata",
+              type: "core::array::Span::<core::felt252>",
+            },
+          ],
+        },
+        {
+          type: "interface",
+          name: "contracts::sessionAccount::ISessionAccount",
+          items: [
+            {
+              type: "function",
+              name: "authorize_session",
+              inputs: [
+                {
+                  name: "session_key",
+                  type: "core::felt252",
+                },
+                {
+                  name: "expires_at",
+                  type: "core::integer::u64",
+                },
+                {
+                  name: "allowed_target",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "revoke_session",
+              inputs: [
+                {
+                  name: "session_key",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "get_owner",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::felt252",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_session",
+              inputs: [
+                {
+                  name: "session_key",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "contracts::sessionAccount::SessionData",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "is_session_active",
+              inputs: [
+                {
+                  name: "session_key",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::bool",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_all_sessions",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::array::Array::<core::felt252>",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "validate_session",
+              inputs: [
+                {
+                  name: "signer",
+                  type: "core::felt252",
+                },
+                {
+                  name: "calls",
+                  type: "core::array::Array::<core::starknet::account::Call>",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::felt252",
+                },
+              ],
+              state_mutability: "view",
+            },
+          ],
+        },
+        {
+          type: "impl",
+          name: "AccountMixinImpl",
+          interface_name:
+            "openzeppelin_interfaces::account::accounts::AccountABI",
+        },
+        {
+          type: "interface",
+          name: "openzeppelin_interfaces::account::accounts::AccountABI",
+          items: [
+            {
+              type: "function",
+              name: "__execute__",
+              inputs: [
+                {
+                  name: "calls",
+                  type: "core::array::Array::<core::starknet::account::Call>",
+                },
+              ],
+              outputs: [],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "__validate__",
+              inputs: [
+                {
+                  name: "calls",
+                  type: "core::array::Array::<core::starknet::account::Call>",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::felt252",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "is_valid_signature",
+              inputs: [
+                {
+                  name: "hash",
+                  type: "core::felt252",
+                },
+                {
+                  name: "signature",
+                  type: "core::array::Array::<core::felt252>",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::felt252",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "supports_interface",
+              inputs: [
+                {
+                  name: "interface_id",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::bool",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "__validate_declare__",
+              inputs: [
+                {
+                  name: "class_hash",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::felt252",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "__validate_deploy__",
+              inputs: [
+                {
+                  name: "class_hash",
+                  type: "core::felt252",
+                },
+                {
+                  name: "contract_address_salt",
+                  type: "core::felt252",
+                },
+                {
+                  name: "public_key",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::felt252",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_public_key",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::felt252",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "set_public_key",
+              inputs: [
+                {
+                  name: "new_public_key",
+                  type: "core::felt252",
+                },
+                {
+                  name: "signature",
+                  type: "core::array::Span::<core::felt252>",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "isValidSignature",
+              inputs: [
+                {
+                  name: "hash",
+                  type: "core::felt252",
+                },
+                {
+                  name: "signature",
+                  type: "core::array::Array::<core::felt252>",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::felt252",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "getPublicKey",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::felt252",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "setPublicKey",
+              inputs: [
+                {
+                  name: "newPublicKey",
+                  type: "core::felt252",
+                },
+                {
+                  name: "signature",
+                  type: "core::array::Span::<core::felt252>",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+          ],
+        },
+        {
+          type: "constructor",
+          name: "constructor",
+          inputs: [
+            {
+              name: "owner_pubkey",
+              type: "core::felt252",
+            },
+            {
+              name: "public_key",
+              type: "core::felt252",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "contracts::sessionAccount::SessionAccount::SessionAuthorized",
+          kind: "struct",
+          members: [
+            {
+              name: "session_key",
+              type: "core::felt252",
+              kind: "key",
+            },
+            {
+              name: "expires_at",
+              type: "core::integer::u64",
+              kind: "data",
+            },
+            {
+              name: "allowed_target",
+              type: "core::starknet::contract_address::ContractAddress",
+              kind: "data",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "contracts::sessionAccount::SessionAccount::SessionRevoked",
+          kind: "struct",
+          members: [
+            {
+              name: "session_key",
+              type: "core::felt252",
+              kind: "key",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "openzeppelin_account::account::AccountComponent::OwnerAdded",
+          kind: "struct",
+          members: [
+            {
+              name: "new_owner_guid",
+              type: "core::felt252",
+              kind: "key",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "openzeppelin_account::account::AccountComponent::OwnerRemoved",
+          kind: "struct",
+          members: [
+            {
+              name: "removed_owner_guid",
+              type: "core::felt252",
+              kind: "key",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "openzeppelin_account::account::AccountComponent::Event",
+          kind: "enum",
+          variants: [
+            {
+              name: "OwnerAdded",
+              type: "openzeppelin_account::account::AccountComponent::OwnerAdded",
+              kind: "nested",
+            },
+            {
+              name: "OwnerRemoved",
+              type: "openzeppelin_account::account::AccountComponent::OwnerRemoved",
+              kind: "nested",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "openzeppelin_introspection::src5::SRC5Component::Event",
+          kind: "enum",
+          variants: [],
+        },
+        {
+          type: "event",
+          name: "contracts::sessionAccount::SessionAccount::Event",
+          kind: "enum",
+          variants: [
+            {
+              name: "SessionAuthorized",
+              type: "contracts::sessionAccount::SessionAccount::SessionAuthorized",
+              kind: "nested",
+            },
+            {
+              name: "SessionRevoked",
+              type: "contracts::sessionAccount::SessionAccount::SessionRevoked",
+              kind: "nested",
+            },
+            {
+              name: "AccountEvent",
+              type: "openzeppelin_account::account::AccountComponent::Event",
+              kind: "flat",
+            },
+            {
+              name: "SRC5Event",
+              type: "openzeppelin_introspection::src5::SRC5Component::Event",
+              kind: "flat",
+            },
+          ],
+        },
+      ],
+      classHash:
+        "0x31b33b884bc65a6e828acb5326670c812414b682810efae1af0123df7182960",
+    },
+  },
 } as const;
 
 export default deployedContracts;
