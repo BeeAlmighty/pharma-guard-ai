@@ -86,7 +86,7 @@ const DrugInteractionChecker: NextPage = () => {
 	];
 
 	return (
-		<div className='lg:h-[calc(100vh-4rem)] min-h-[calc(100vh-4rem)] bg-slate-950 text-slate-200 font-sans lg:overflow-hidden flex flex-col'>
+		<div className='lg:h-[calc(100vh-4rem)] min-h-[calc(120vh-4rem)] bg-slate-950 text-slate-200 font-sans lg:overflow-hidden flex flex-col'>
 			{/* --- HERO SECTION --- */}
 			<section className='shrink-0 py-6 px-4 bg-slate-900/30 border-b border-white/5 flex flex-col items-center text-center animate-in fade-in slide-in-from-top-4 duration-700'>
 				<h2 className='text-2xl md:text-3xl font-bold text-white tracking-tight mb-2'>
